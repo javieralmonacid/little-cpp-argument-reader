@@ -8,9 +8,6 @@ int main(int argc, char* argv[])
   // Declare a map to store key-value pairs
   std::map<std::string, std::string> args_map;
 
-  // Declare a vector to store single arguments
-  std::vector<std::string> args_vec;
-
   // Loop through the command-line arguments
   for (int i = 1; i < argc; ++i) {
     std::string arg = argv[i];
@@ -21,9 +18,12 @@ int main(int argc, char* argv[])
 
     // Check if the argument contains '=' (i.e., key-value pair)
     size_t pos = arg.find('=');
+    // Extract key from argument
+    std::string key = arg.substr(0, pos);
+
     if (pos != std::string::npos) {
-      // Extract key and value from the argument
-      std::string key = arg.substr(0, pos);
+      // Extract value from argument if argument
+      // does contain "="
       std::string value = arg.substr(pos + 1);
 
       // Insert the key-value pair into the map
@@ -31,8 +31,9 @@ int main(int argc, char* argv[])
     } 
     else
     {
-      // Insert the value into the vector
-      args_vec.push_back(arg);
+      // If argument does not contain "=", insert
+      // the key-value pair with value="true"
+      args_map[key] = "true";
     }
   }
 
@@ -40,10 +41,6 @@ int main(int argc, char* argv[])
   std::cout << "Parsed pairs:" << std::endl;
   for (const auto& pair : args_map)
     std::cout << pair.first << " = " << pair.second << std::endl;
-  
-  std::cout << "Parsed booleans:" << std::endl;
-  for (const auto& elem : args_vec)
-    std::cout << elem << std::endl;
 
   return 0;
 }
