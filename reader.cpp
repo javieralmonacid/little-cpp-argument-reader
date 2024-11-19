@@ -8,6 +8,13 @@ int main(int argc, char* argv[])
   // Declare a map to store key-value pairs
   std::map<std::string, std::string> args_map;
 
+  // Store default values
+  args_map["-PARAMETERS"] = "parameters.prm";
+  args_map["-BDY_STRAIN"] = "control_points_strain.dat";
+  args_map["-ACTIVATION"] = "control_points_activation.dat";
+  args_map["-ACTIVATION_LIST"] = "activation_list.dat";
+  args_map["-QP_LIST_ONLY"] = "false";
+
   // Loop through the command-line arguments
   for (int i = 1; i < argc; ++i) {
     std::string arg = argv[i];
@@ -18,23 +25,25 @@ int main(int argc, char* argv[])
 
     // Check if the argument contains '=' (i.e., key-value pair)
     size_t pos = arg.find('=');
+
     // Extract key from argument
     std::string key = arg.substr(0, pos);
 
-    if (pos != std::string::npos) {
-      // Extract value from argument if argument
-      // does contain "="
-      std::string value = arg.substr(pos + 1);
+    // Verify that the key is valid
+    auto it = args_map.find(key);
+    if (it == args_map.end())
+      throw std::invalid_argument("Unsupported argument: " + key);
 
-      // Insert the key-value pair into the map
+    // If argument contains "=", insert key-value pair,
+    // otherwise insert key-"true" pair.
+    if (pos != std::string::npos) 
+    {
+      // Extract value from argument
+      std::string value = arg.substr(pos + 1);
       args_map[key] = value;
     } 
     else
-    {
-      // If argument does not contain "=", insert
-      // the key-value pair with value="true"
       args_map[key] = "true";
-    }
   }
 
   // Display the contents of the map
